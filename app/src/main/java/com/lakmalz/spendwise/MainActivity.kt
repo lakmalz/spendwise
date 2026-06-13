@@ -11,17 +11,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.lakmalz.spendwise.ui.theme.SpendwiseTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+// @AndroidEntryPoint enables Hilt injection in this Activity.
+// installSplashScreen() must be called before super.onCreate() to show the splash.
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             SpendwiseTheme {
+                // NavGraph will replace this Scaffold once feature/navigation-setup is merged
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "SpendWise",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -42,6 +49,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     SpendwiseTheme {
-        Greeting("Android")
+        Greeting("SpendWise")
     }
 }

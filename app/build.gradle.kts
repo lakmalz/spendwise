@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.dagger.hilt.android")    // Hilt plugin
-    alias(libs.plugins.ksp)                 // Kotlin Symbol Processing(KSP) — for Room & Hilt
+    alias(libs.plugins.kotlin.serialization)  // @Serializable for type-safe Navigation routes
+    id("com.google.dagger.hilt.android")      // Hilt plugin
+    alias(libs.plugins.ksp)                   // Kotlin Symbol Processing(KSP) — for Room & Hilt
 }
 
 android {
@@ -43,26 +44,11 @@ android {
 }
 
 dependencies {
-//    implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.lifecycle.runtime.ktx)
-//    implementation(libs.androidx.activity.compose)
-//    implementation(platform(libs.androidx.compose.bom))
-//    implementation(libs.androidx.compose.ui)
-//    implementation(libs.androidx.compose.ui.graphics)
-//    implementation(libs.androidx.compose.ui.tooling.preview)
-//    implementation(libs.androidx.compose.material3)
-//    testImplementation(libs.junit)
-//    androidTestImplementation(libs.androidx.junit)
-//    androidTestImplementation(libs.androidx.espresso.core)
-//    androidTestImplementation(platform(libs.androidx.compose.bom))
-//    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-//    debugImplementation(libs.androidx.compose.ui.tooling)
-//    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // ── Compose BOM ─────────────────────────────────────────────────────────
     // BOM = Bill of Materials. It pins ALL Compose library versions together
     // so you never get version mismatch errors between compose-ui and material3
-    val composeBom = platform("androidx.compose:compose-bom:2024.05.00")
+    val composeBom = platform(libs.androidx.compose.bom)   // version in libs.versions.toml
     implementation(composeBom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -74,18 +60,33 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-compose:1.9.0")
 
+    // ── Splash Screen ────────────────────────────────────────────────────────
+    implementation("androidx.core:core-splashscreen:1.2.0")
+
     // ── Lifecycle + ViewModel ────────────────────────────────────────────────
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
     // collectAsStateWithLifecycle() lives here — critical for safe Flow collection
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.2")
 
-    // ── Navigation ───────────────────────────────────────────────────────────
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    // ── Navigation (type-safe routes with @Serializable — Navigation 2.8+) ──
+    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+
+    // ── Paging 3 ─────────────────────────────────────────────────────────────
+    // Loads expenses in pages — avoids loading entire DB table into memory
+    implementation("androidx.paging:paging-runtime:3.3.2")
+    implementation("androidx.paging:paging-compose:3.3.2")
 
     // ── Hilt ────────────────────────────────────────────────────────────────
     implementation("com.google.dagger:hilt-android:2.59.2")
     ksp("com.google.dagger:hilt-compiler:2.59.2")           // ksp not kapt — faster
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0") // hiltViewModel()
+    implementation("androidx.hilt:hilt-work:1.2.0")         // @HiltWorker support
+    ksp("androidx.hilt:hilt-compiler:1.2.0")                // Hilt AndroidX compiler
+
+    // ── WorkManager ──────────────────────────────────────────────────────────
+    // Budget alerts and periodic background tasks
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 
     // ── Room ─────────────────────────────────────────────────────────────────
     implementation("androidx.room:room-runtime:2.8.4")

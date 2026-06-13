@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.Spendwise" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash screen theme — MainActivity uses this until setContent() is called.
+         postSplashScreenTheme switches back to the base theme after the splash. -->
+    <style name="Theme.Spendwise.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="postSplashScreenTheme">@style/Theme.Spendwise</item>
+    </style>
 </resources>
